@@ -71,6 +71,9 @@ HTML-отчёт находится в `reports/allure/index.html` и откры�
 Подробности и шаги воспроизведения — в [BUGS.md](BUGS.md).
 Ожидания не ослаблены; ошибки не скрываются через `skip` или `xfail`.
 
+[Свежий прогон GitHub Actions](https://github.com/gbasboosted/stellar-burgers-api/actions/runs/40344184995)
+подтвердил результат **22 passed, 2 failed** на том же QA-стенде.
+
 Для повторной генерации установлен Allure Report 3; нужен Node.js 22+ и pnpm 11.25.0:
 
 ```bash
