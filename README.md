@@ -3,7 +3,7 @@
 Автотесты API: задание 2 дипломного проекта. Используются `pytest`, `requests`
 и `allure-pytest`. Проверяются только регистрация, вход и создание заказа.
 
-Стенд: https://stellarburgers.education-services.ru/.
+Стенд: https://qa-stellarburgers.education-services.ru/.
 [Документация API](https://code.s3.yandex.net/qa-automation-engineer/python-full/diploma/Api-Stellar_Burgers.pdf).
 
 ## Установка и запуск
@@ -25,7 +25,7 @@ python -m pytest
 Настройки можно переопределить переменными окружения:
 
 ```bash
-STELLAR_BURGERS_URL=https://stellarburgers.education-services.ru \
+STELLAR_BURGERS_URL=https://qa-stellarburgers.education-services.ru \
 STELLAR_BURGERS_TIMEOUT=30 python -m pytest
 ```
 
@@ -63,13 +63,13 @@ HTML-отчёт находится в `reports/allure/index.html` и откры�
 
 ### Сохранённый прогон
 
-23 октября 2026 года локально выполнена команда
-`STELLAR_BURGERS_TIMEOUT=5 python -m pytest --tb=short`.
-Все 24 случая получили статус **broken** в Allure из-за таймаута TLS при
-подключении к учебному стенду (`requests.exceptions.ReadTimeout`). Pytest
-показал 11 ошибок в телах тестов и 13 ошибок подготовки данных.
-HTTP-ответы не были получены; соответствие поведения API документации этим
-прогоном не подтверждено. Ошибки не скрыты через `skip` или `xfail`.
+26 октября 2026 года выполнена команда `python -m pytest --tb=short`
+на QA-стенде. Результат: **22 passed, 2 failed**, без ошибок подготовки и очистки.
+Два падения воспроизводят расхождение контракта: короткий неверный хеш
+`invalid-hash` возвращает HTTP 400 вместо документированного HTTP 500,
+с авторизацией и без неё. Для 24-символьного неверного хеша проверка HTTP 500 проходит.
+Подробности и шаги воспроизведения — в [BUGS.md](BUGS.md).
+Ожидания не ослаблены; ошибки не скрываются через `skip` или `xfail`.
 
 Для повторной генерации установлен Allure Report 3; нужен Node.js 22+ и pnpm 11.25.0:
 
