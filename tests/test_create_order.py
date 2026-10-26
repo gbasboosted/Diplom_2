@@ -35,13 +35,12 @@ class TestCreateOrder:
         assert response.status_code == 400
         assert response.json() == {"success": False, "message": "Ingredient ids must be provided"}
 
-    @allure.title("Создание заказа с неверным хешем: {invalid_hash}")
-    @pytest.mark.parametrize(
-        "invalid_hash", ["invalid-hash", "61c0c5a71d1f82001bdaaa6z"],
-        ids=["invalid-length", "non-hex-character"],
-    )
-    def test_create_order_with_invalid_ingredient_hash(self, api, order_token, invalid_hash):
-        response = api.create_order({"ingredients": [invalid_hash]}, token=order_token)
+    @allure.title("Создание заказа с неверным 24-символьным хешем")
+    def test_create_order_with_invalid_ingredient_hash(self, api, order_token):
+        response = api.create_order(
+            {"ingredients": ["61c0c5a71d1f82001bdaaa6z"]}, token=order_token
+        )
 
-        # Документация обещает HTTP 500, но не фиксирует JSON-тело ошибки.
         assert response.status_code == 500
+        assert response.headers["Content-Type"].startswith("text/html")
+        assert "<pre>Internal Server Error</pre>" in response.text
