@@ -24,17 +24,21 @@ class TestCreateUser:
         assert response.status_code == 403
         assert response.json() == {"success": False, "message": "User already exists"}
 
-    @allure.title("Регистрация: обязательное поле {field}, вариант {mode}")
-    @pytest.mark.parametrize("field", ["email", "password", "name"])
-    @pytest.mark.parametrize("mode", ["missing", "empty"])
-    def test_create_user_without_required_field(self, register_user, user_data, field, mode):
-        payload = user_data.copy()
-        if mode == "missing":
-            payload.pop(field)
-        else:
-            payload[field] = ""
-
-        response = register_user(payload)
+    @allure.title("Регистрация с отсутствующим или пустым обязательным полем")
+    @pytest.mark.parametrize(
+        "registration_payload",
+        [
+            pytest.param((("password", "name"), {}), id="missing-email"),
+            pytest.param((("email", "name"), {}), id="missing-password"),
+            pytest.param((("email", "password"), {}), id="missing-name"),
+            pytest.param((("email", "password", "name"), {"email": ""}), id="empty-email"),
+            pytest.param((("email", "password", "name"), {"password": ""}), id="empty-password"),
+            pytest.param((("email", "password", "name"), {"name": ""}), id="empty-name"),
+        ],
+        indirect=True,
+    )
+    def test_create_user_without_required_field(self, register_user, registration_payload):
+        response = register_user(registration_payload)
 
         assert response.status_code == 403
         assert response.json() == {

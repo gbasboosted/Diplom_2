@@ -22,6 +22,22 @@ def user_data():
 
 
 @pytest.fixture
+def registration_payload(request, user_data):
+    fields, overrides = request.param
+    return {field: user_data[field] for field in fields} | overrides
+
+
+@pytest.fixture
+def invalid_credentials(request, registered_user):
+    email_source, password_source = request.param
+    sources = {"valid": registered_user["data"], "invalid": make_user()}
+    return {
+        "email": sources[email_source]["email"],
+        "password": sources[password_source]["password"],
+    }
+
+
+@pytest.fixture
 def register_user(api):
     created = []
 
@@ -78,6 +94,19 @@ def ingredient_ids():
             return [bun, filling, bun]
     finally:
         client.close()
+
+
+@pytest.fixture
+def order_ingredients(request, ingredient_ids):
+    return [ingredient_ids[index] for index in request.param]
+
+
+@pytest.fixture(params=[True, False], ids=["authorized", "anonymous"])
+def order_token(request):
+    # Для анонимных заказов не регистрируем лишнего пользователя.
+    if request.param:
+        return request.getfixturevalue("registered_user")["token"]
+    return None
 
 
 @pytest.fixture(scope="session", autouse=True)
