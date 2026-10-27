@@ -1,0 +1,1 @@
+{"status": 200, "body": {"success": true, "user": {"email": "stellar-api-b5e1780db4614846826c32d0296efa0d@example.com", "name": "Stellar b5e1780d"}, "accessToken": "<redacted>", "refreshToken": "<redacted>"}}
